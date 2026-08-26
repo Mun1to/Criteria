@@ -1,0 +1,13 @@
+{
+  "name": "criteria",
+  "description": "Turns several loose questions into a one-file HTML questionnaire with a progress bar, a mandatory \"Other\" option, and a button that copies every answer as one block of text to paste back into the chat.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Mun1to",
+    "url": "https://github.com/Mun1to"
+  },
+  "homepage": "https://github.com/Mun1to/Criteria",
+  "repository": "https://github.com/Mun1to/Criteria",
+  "license": "MIT",
+  "keywords": ["questionnaire", "form", "decision-making", "html", "workflow"]
+}

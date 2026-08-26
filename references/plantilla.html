@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITULO__</title>
+<style>
+  /* ===================================================================
+     PALETA, lo único que se toca al adaptar esto al proyecto donde se usa.
+     Por defecto lleva los cuatro colores por tema del resto de la casa
+     (Vidorq App.css), medidos por contraste WCAG 2.1. Si el proyecto activo
+     tiene su propio sistema de tokens (variables de color, radios, tipo de
+     letra), esos valores se sustituyen aquí por los suyos; si un hex se
+     toca a mano, se vuelve a medir el contraste, no se ajusta mirando. El
+     resto del CSS de abajo (ESTRUCTURA) usa siempre var(--algo) y no hay
+     que tocarlo para que el cambio de piel se refleje solo.
+     =================================================================== */
+  :root {
+    font-family: "Segoe UI Variable Display", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    font-size: 15.5px;
+    line-height: 1.5;
+    letter-spacing: .05px;
+    -webkit-font-smoothing: antialiased;
+    --w-cuerpo: 600;
+    --w-fuerte: 720;
+    --w-et: 800;
+    --radio: 12px;
+    --panel: color-mix(in srgb, var(--bg) 100%, var(--vuelta) 4%);
+    --panel2: color-mix(in srgb, var(--bg) 100%, var(--vuelta) 2%);
+    --line: color-mix(in srgb, var(--bg) 100%, var(--vuelta) 13%);
+    --line-soft: color-mix(in srgb, var(--bg) 100%, var(--vuelta) 7%);
+    --hueco: color-mix(in srgb, var(--bg) 100%, var(--hundir) 40%);
+    --accent-soft: color-mix(in srgb, var(--accent) 74%, var(--vuelta));
+    --accent-fill: color-mix(in srgb, var(--accent) 14%, var(--bg));
+  }
+  :root {
+    color-scheme: light;
+    --vuelta: #000000; --hundir: #ffffff;
+    --bg: #f4f5f7; --text: #1a1d21; --text-dim: #33383f; --muted: #5c636d; --faint: #858c96;
+    --accent: #1f6fc0; --sobre: #ffffff; --ok: #137a52; --warn: #9c6b0f; --bad: #c33a2c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --vuelta: #ffffff; --hundir: #000000;
+      --bg: #17191c; --text: #e8eaed; --text-dim: #c5cbd3; --muted: #9aa1ab; --faint: #6b727c;
+      --accent: #3d8ee0; --sobre: #06090c; --ok: #35b37e; --warn: #d7a13a; --bad: #e05c4e;
+    }
+  }
+  /* =================== ESTRUCTURA, no se toca al adaptar =============== */
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); }
+  .cr-wrap { max-width: 720px; margin: 0 auto; padding: 24px 22px 140px; }
+  .cr-head h1 { font-size: 22px; font-weight: var(--w-fuerte); letter-spacing: -.3px; margin: 0 0 8px; }
+  .cr-sub { color: var(--muted); font-size: 14px; margin: 0 0 4px; }
+  .cr-meta { color: var(--faint); font-size: 12.5px; margin: 0 0 28px; }
+
+  .cr-progreso-top {
+    position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line);
+  }
+  .cr-progreso-inner {
+    max-width: 720px; margin: 0 auto; padding: 14px 22px 12px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .cr-progreso-track {
+    flex: 1; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden;
+  }
+  .cr-progreso-fill {
+    height: 100%; width: 0%; background: var(--accent); border-radius: 999px;
+    transition: width .25s ease;
+  }
+  .cr-progreso-texto { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .cr-progreso-texto b { color: var(--text); }
+
+  .cr-card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radio);
+    padding: 16px 18px; margin: 0 0 14px;
+  }
+  .cr-card[data-respondida="1"] { border-color: var(--accent-soft); }
+  .cr-num {
+    display: inline-block; font: var(--w-et) 11px ui-monospace, Consolas, monospace;
+    letter-spacing: .5px; color: var(--accent); background: var(--accent-fill);
+    border-radius: 999px; padding: 2px 9px; margin-bottom: 8px;
+  }
+  .cr-pregunta { font-size: 15.5px; font-weight: var(--w-fuerte); margin: 0 0 4px; }
+  .cr-ayuda { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+  .cr-campo { width: 100%; }
+
+  input[type="text"], textarea.cr-campo {
+    width: 100%; background: var(--hueco); color: var(--text); border: 1px solid var(--line);
+    border-radius: 9px; padding: 10px 12px; font: inherit; resize: vertical;
+  }
+  textarea.cr-campo { min-height: 74px; }
+  input[type="text"]:focus, textarea.cr-campo:focus, input[type="range"]:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 1px;
+  }
+
+  .cr-opciones { display: flex; flex-direction: column; gap: 8px; }
+  .cr-opcion {
+    display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+    border: 1px solid var(--line); border-radius: 9px; background: var(--panel2); cursor: pointer;
+  }
+  .cr-opcion:has(input:checked) { border-color: var(--accent); background: var(--accent-fill); }
+  .cr-opcion input { accent-color: var(--accent); width: 16px; height: 16px; flex: none; }
+  .cr-opcion span { font-size: 14px; }
+  .cr-opcion .cr-otra-txt { flex: 1; }
+
+  .cr-escala { display: flex; flex-direction: column; gap: 6px; }
+  .cr-escala input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .cr-escala-fila { display: flex; justify-content: space-between; font-size: 12px; color: var(--faint); }
+  .cr-escala-valor { font-weight: var(--w-fuerte); color: var(--accent); font-size: 15px; }
+
+  .cr-pie {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+    background: var(--panel); border-top: 1px solid var(--line);
+    padding: 12px 22px; display: flex; justify-content: center;
+  }
+  .cr-pie-inner { max-width: 720px; width: 100%; display: flex; justify-content: flex-end; }
+  #cr-boton {
+    font: inherit; font-weight: var(--w-fuerte); font-size: 14px; cursor: pointer;
+    background: var(--accent); color: var(--sobre); border: none; border-radius: 9px;
+    padding: 11px 20px;
+  }
+  #cr-boton:active { transform: translateY(1px); }
+
+  .cr-resultado {
+    position: fixed; left: 0; right: 0; bottom: 62px; z-index: 6;
+    max-width: 720px; margin: 0 auto; left: 0; right: 0;
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radio);
+    padding: 14px 16px; box-shadow: 0 8px 28px rgba(0,0,0,.28);
+    width: min(720px, calc(100% - 44px));
+  }
+  .cr-resultado[hidden] { display: none; }
+  .cr-resultado-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .cr-resultado-head strong { font-size: 13px; color: var(--ok); flex: 1; }
+  .cr-resultado-head button {
+    font: inherit; font-size: 12.5px; cursor: pointer; background: var(--panel2);
+    color: var(--muted); border: 1px solid var(--line); border-radius: 7px; padding: 5px 10px;
+  }
+  #cr-texto {
+    width: 100%; min-height: 130px; background: var(--hueco); color: var(--text-dim);
+    border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px;
+    font: 12.5px ui-monospace, Consolas, monospace; resize: vertical;
+  }
+</style>
+</head>
+<body>
+<div class="cr-progreso-top">
+  <div class="cr-progreso-inner">
+    <div class="cr-progreso-track"><div class="cr-progreso-fill" id="cr-progreso-fill"></div></div>
+    <div class="cr-progreso-texto"><b id="cr-contador">0</b>/<span id="cr-total">0</span> respondidas</div>
+  </div>
+</div>
+
+<main class="cr-wrap">
+  <header class="cr-head">
+    <h1 id="cr-titulo"></h1>
+    <p class="cr-sub" id="cr-subtitulo"></p>
+    <p class="cr-meta">Nada aquí es obligatorio: responde lo que sepas y copia el bloque cuando termines.</p>
+  </header>
+  <div id="cr-preguntas"></div>
+</main>
+
+<div class="cr-resultado" id="cr-resultado" hidden>
+  <div class="cr-resultado-head">
+    <strong id="cr-estado">Bloque listo</strong>
+    <button type="button" id="cr-copiar-otra-vez">Copiar de nuevo</button>
+    <button type="button" id="cr-cerrar-resultado">Cerrar</button>
+  </div>
+  <textarea id="cr-texto" readonly></textarea>
+</div>
+
+<footer class="cr-pie">
+  <div class="cr-pie-inner"><button type="button" id="cr-boton">Copiar respuestas</button></div>
+</footer>
+
+<script>
+// ---------------------------------------------------------------------
+// Rellenar aquí: TITULO, SUBTITULO y PREGUNTAS. Es lo único que cambia
+// entre un cuestionario y otro; el resto de este script no se toca.
+// ---------------------------------------------------------------------
+const TITULO = "__TITULO__";
+const SUBTITULO = "__SUBTITULO__";
+const PREGUNTAS = __PREGUNTAS_JSON__;
+/*
+Formas de pregunta admitidas. En "opcion" y "multiple" la opción "Otra:" con
+texto libre se añade SIEMPRE sola, no hace falta pedirla.
+  { tipo: "texto",    pregunta, ayuda? }
+  { tipo: "parrafo",  pregunta, ayuda? }
+  { tipo: "opcion",   pregunta, ayuda?, opciones: [..] }
+  { tipo: "multiple", pregunta, ayuda?, opciones: [..] }
+  { tipo: "escala",   pregunta, ayuda?, min?, max?, defecto?, etiquetaMin?, etiquetaMax? }
+*/
+// ---------------------------------------------------------------------
+
+const CLAVE = "criteria:" + location.pathname;
+const cont = document.getElementById("cr-preguntas");
+document.getElementById("cr-titulo").textContent = TITULO;
+document.getElementById("cr-subtitulo").textContent = SUBTITULO;
+document.getElementById("cr-total").textContent = PREGUNTAS.length;
+
+function cargarGuardado() {
+  try { return JSON.parse(localStorage.getItem(CLAVE) || "{}"); } catch { return {}; }
+}
+function guardar(id, valor) {
+  const g = cargarGuardado();
+  g[id] = valor;
+  try { localStorage.setItem(CLAVE, JSON.stringify(g)); } catch {}
+  actualizarContador();
+}
+const guardado = cargarGuardado();
+
+PREGUNTAS.forEach((p, i) => {
+  const id = "p" + i;
+  const card = document.createElement("div");
+  card.className = "cr-card";
+  card.id = "card-" + id;
+
+  const num = document.createElement("span");
+  num.className = "cr-num";
+  num.textContent = "P" + (i + 1);
+  card.appendChild(num);
+
+  const h = document.createElement("p");
+  h.className = "cr-pregunta";
+  h.textContent = p.pregunta;
+  card.appendChild(h);
+
+  if (p.ayuda) {
+    const a = document.createElement("p");
+    a.className = "cr-ayuda";
+    a.textContent = p.ayuda;
+    card.appendChild(a);
+  }
+
+  const prev = guardado[id];
+
+  if (p.tipo === "texto") {
+    const inp = document.createElement("input");
+    inp.type = "text"; inp.className = "cr-campo"; inp.id = id;
+    if (prev) inp.value = prev;
+    inp.addEventListener("input", () => guardar(id, inp.value));
+    card.appendChild(inp);
+
+  } else if (p.tipo === "parrafo") {
+    const ta = document.createElement("textarea");
+    ta.className = "cr-campo"; ta.id = id;
+    if (prev) ta.value = prev;
+    ta.addEventListener("input", () => guardar(id, ta.value));
+    card.appendChild(ta);
+
+  } else if (p.tipo === "opcion" || p.tipo === "multiple") {
+    const wrap = document.createElement("div");
+    wrap.className = "cr-opciones";
+    wrap.id = id;
+    const tipoInput = p.tipo === "opcion" ? "radio" : "checkbox";
+    const opciones = [...p.opciones, "__OTRA__"];
+    opciones.forEach((op, j) => {
+      const label = document.createElement("label");
+      label.className = "cr-opcion";
+      const inp = document.createElement("input");
+      inp.type = tipoInput; inp.name = id; inp.value = op;
+      const esOtra = op === "__OTRA__";
+      let otraTxt = null;
+      if (esOtra) {
+        const span = document.createElement("span");
+        span.textContent = "Otra:";
+        label.appendChild(inp);
+        label.appendChild(span);
+        otraTxt = document.createElement("input");
+        otraTxt.type = "text"; otraTxt.className = "cr-otra-txt";
+        otraTxt.placeholder = "escribe aquí";
+        otraTxt.addEventListener("input", refrescar);
+        label.appendChild(otraTxt);
+      } else {
+        const span = document.createElement("span");
+        span.textContent = op;
+        label.appendChild(inp);
+        label.appendChild(span);
+      }
+      inp.addEventListener("change", refrescar);
+      wrap.appendChild(label);
+
+      function refrescar() {
+        const marcados = [...wrap.querySelectorAll("input:checked")].map(c => {
+          if (c.value === "__OTRA__") return otraTxt.value.trim() ? "Otra: " + otraTxt.value.trim() : "Otra";
+          return c.value;
+        });
+        guardar(id, marcados);
+      }
+    });
+    card.appendChild(wrap);
+
+  } else if (p.tipo === "escala") {
+    const min = p.min ?? 0, max = p.max ?? 10, def = p.defecto ?? Math.round((min + max) / 2);
+    const wrap = document.createElement("div");
+    wrap.className = "cr-escala"; wrap.id = id;
+    const rango = document.createElement("input");
+    rango.type = "range"; rango.min = min; rango.max = max;
+    rango.value = prev != null ? prev : def;
+    const valorTxt = document.createElement("div");
+    valorTxt.className = "cr-escala-valor";
+    valorTxt.textContent = rango.value;
+    rango.addEventListener("input", () => {
+      valorTxt.textContent = rango.value;
+      guardar(id, rango.value);
+    });
+    const fila = document.createElement("div");
+    fila.className = "cr-escala-fila";
+    fila.innerHTML = `<span>${p.etiquetaMin || min}</span><span>${p.etiquetaMax || max}</span>`;
+    wrap.appendChild(rango);
+    wrap.appendChild(valorTxt);
+    wrap.appendChild(fila);
+    card.appendChild(wrap);
+    if (prev == null) guardar(id, rango.value);
+  }
+
+  cont.appendChild(card);
+});
+
+function actualizarContador() {
+  const g = cargarGuardado();
+  let n = 0;
+  PREGUNTAS.forEach((p, i) => {
+    const id = "p" + i;
+    const respondida = g[id] != null && String(Array.isArray(g[id]) ? g[id].join(",") : g[id]).trim().length > 0;
+    const cardEl = document.getElementById("card-" + id);
+    if (cardEl) cardEl.dataset.respondida = respondida ? "1" : "0";
+    if (respondida) n++;
+  });
+  document.getElementById("cr-contador").textContent = n;
+  const pct = PREGUNTAS.length ? Math.round((n / PREGUNTAS.length) * 100) : 0;
+  document.getElementById("cr-progreso-fill").style.width = pct + "%";
+}
+actualizarContador();
+
+function generarTexto() {
+  const g = cargarGuardado();
+  const lineas = [];
+  PREGUNTAS.forEach((p, i) => {
+    const id = "p" + i;
+    let v = g[id];
+    let texto;
+    if (v == null || (Array.isArray(v) && v.length === 0) || String(v).trim() === "") {
+      texto = "(sin responder)";
+    } else if (Array.isArray(v)) {
+      texto = v.join(", ");
+    } else {
+      texto = String(v);
+    }
+    lineas.push("P" + (i + 1) + ". " + p.pregunta);
+    lineas.push("→ " + texto);
+    lineas.push("");
+  });
+  return lineas.join("\n").trim();
+}
+
+async function copiar(texto) {
+  try {
+    await navigator.clipboard.writeText(texto);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+const panelResultado = document.getElementById("cr-resultado");
+const cajaTexto = document.getElementById("cr-texto");
+const estado = document.getElementById("cr-estado");
+
+async function generarYCopiar() {
+  const texto = generarTexto();
+  cajaTexto.value = texto;
+  panelResultado.hidden = false;
+  const ok = await copiar(texto);
+  if (ok) {
+    estado.textContent = "Copiado. Pégalo en el chat.";
+    estado.style.color = "var(--ok)";
+  } else {
+    cajaTexto.focus();
+    cajaTexto.select();
+    estado.textContent = "No se pudo copiar solo: está seleccionado, pulsa Ctrl+C.";
+    estado.style.color = "var(--warn)";
+  }
+}
+
+document.getElementById("cr-boton").addEventListener("click", generarYCopiar);
+document.getElementById("cr-copiar-otra-vez").addEventListener("click", generarYCopiar);
+document.getElementById("cr-cerrar-resultado").addEventListener("click", () => { panelResultado.hidden = true; });
+</script>
+</body>
+</html>
