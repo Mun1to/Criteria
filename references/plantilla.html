@@ -270,7 +270,7 @@ PREGUNTAS.forEach((p, i) => {
         otraTxt = document.createElement("input");
         otraTxt.type = "text"; otraTxt.className = "cr-otra-txt";
         otraTxt.placeholder = "escribe aquí";
-        otraTxt.addEventListener("input", refrescar);
+        otraTxt.addEventListener("input", () => { inp.checked = true; refrescar(); });
         label.appendChild(otraTxt);
       } else {
         const span = document.createElement("span");
@@ -289,6 +289,19 @@ PREGUNTAS.forEach((p, i) => {
         guardar(id, marcados);
       }
     });
+    if (Array.isArray(prev)) {
+      prev.forEach(v => {
+        if (v === "Otra" || v.startsWith("Otra: ")) {
+          const otraInput = wrap.querySelector('input[value="__OTRA__"]');
+          const otraTxt = wrap.querySelector(".cr-otra-txt");
+          if (otraInput) otraInput.checked = true;
+          if (otraTxt && v.startsWith("Otra: ")) otraTxt.value = v.slice(6);
+        } else {
+          const match = [...wrap.querySelectorAll("input")].find(inp => inp.value === v);
+          if (match) match.checked = true;
+        }
+      });
+    }
     card.appendChild(wrap);
 
   } else if (p.tipo === "escala") {

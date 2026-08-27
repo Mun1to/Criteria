@@ -35,6 +35,21 @@ Las que hagan falta para la decisión. Para cada una decide su tipo:
 
 Una pregunta por decisión: si una pregunta lleva dos cosas dentro, son dos preguntas.
 
+**Cómo distinguir `opcion` de `multiple`, sin adivinar:** pregúntate si dos de las respuestas
+podrían ser ciertas a la vez. "¿Cuánto cuesta al mes?" es `opcion`, porque un precio excluye a los
+demás. "¿Qué justifica pagar esto?" o "¿qué debe hacer la app?" casi siempre son `multiple`, porque
+varias razones o varias funciones pueden ser verdad al mismo tiempo. Por defecto, ante la duda,
+`multiple` cuesta menos que forzar una sola respuesta a algo que no lo es: peca de dejar elegir de
+más, no de menos.
+
+**Esto no es negociable, ni siquiera si el cuestionario necesita más diseño del que trae la
+plantilla.** Si hace falta un cuestionario con tablas comparativas, avisos o insignias de
+"recomendada" (contenido que no cabe en el HTML plano de `references/plantilla.html`), se puede
+construir a mano un diseño más rico, pero el comportamiento no se negocia: toda pregunta de opción
+lleva su "Otra:" con texto libre, y toda pregunta donde dos respuestas puedan ser ciertas a la vez
+usa checkboxes, no radios. Un cuestionario hecho a mano sin esto no es una versión simplificada de
+Criteria, es un cuestionario roto que parece Criteria.
+
 ### 2. Adapta la paleta al proyecto donde estás trabajando
 
 Esto no es opcional: el cuestionario **no lleva siempre el mismo look**, lleva el de la
@@ -89,7 +104,11 @@ toma la decisión que motivó el cuestionario.
 - **Barra de progreso arriba**, siempre visible mientras se hace scroll (`position: sticky`), con
   el contador de respondidas al lado. No es solo un número perdido al pie de página.
 - **"Otra:" siempre presente** en toda pregunta de opción o múltiple, con su hueco de texto
-  libre. Es obligatorio en la plantilla, no algo que haya que acordarse de pedir.
+  libre. Es obligatorio en la plantilla, no algo que haya que acordarse de pedir. Escribir ahí la
+  marca sola, sin tener que clicar antes su casilla, y la selección se recuerda al recargar la
+  página igual que el resto de respuestas.
+- **Selección múltiple de verdad.** `multiple` usa casillas, no radios: se puede marcar más de
+  una a la vez, y el bloque final las junta separadas por comas.
 - **Nada es obligatorio de responder.** Un formulario donde todo es obligatorio no lo rellena
   nadie rápido; el botón copia igual con preguntas en blanco, marcadas como tal.
 - **Copiar con red.** Intenta `navigator.clipboard`, y si el navegador lo bloquea (pasa a veces
