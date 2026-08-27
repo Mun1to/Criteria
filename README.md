@@ -45,8 +45,12 @@ One HTML file, opened straight in your own browser, never a hosted page:
 
 - A progress bar at the top, always visible while you scroll.
 - One card per question: short text, a paragraph, pick one, pick several, or a 0-10 scale.
+  "Pick several" uses real checkboxes and says so with its own badge, so it is never confused
+  with "pick one".
 - Every "pick one" or "pick several" question always carries an "Other:" option with a free
-  text field, so an answer outside the list never gets lost.
+  text field, so an answer outside the list never gets lost. Any option can also carry a short
+  explanation and a badge (like "recommended"), so a nuanced question does not need a custom
+  page to explain its choices.
 - A button at the bottom that builds one plain-text block, one line per question, and copies
   it straight to your clipboard. If the browser blocks the clipboard (it can happen on a
   local `file://` page), the text is left selected so `Ctrl+C` still works.

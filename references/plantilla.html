@@ -101,9 +101,24 @@
     border: 1px solid var(--line); border-radius: 9px; background: var(--panel2); cursor: pointer;
   }
   .cr-opcion:has(input:checked) { border-color: var(--accent); background: var(--accent-fill); }
-  .cr-opcion input { accent-color: var(--accent); width: 16px; height: 16px; flex: none; }
+  .cr-opcion input { accent-color: var(--accent); width: 16px; height: 16px; flex: none; margin-top: 2px; }
   .cr-opcion span { font-size: 14px; }
   .cr-opcion .cr-otra-txt { flex: 1; }
+  .cr-opcion-cuerpo { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+  .cr-opcion-titulo { font-size: 14px; }
+  .cr-opcion-ayuda { color: var(--muted); font-size: 12.5px; }
+  .cr-badge {
+    display: inline-block; font: var(--w-et) 10px ui-monospace, Consolas, monospace;
+    letter-spacing: .4px; text-transform: uppercase; color: var(--ok);
+    background: color-mix(in srgb, var(--ok) 16%, var(--bg)); border-radius: 999px;
+    padding: 1px 7px; margin-left: 7px; vertical-align: 1px;
+  }
+  .cr-badge-multi {
+    display: inline-block; font: var(--w-et) 10px ui-monospace, Consolas, monospace;
+    letter-spacing: .4px; text-transform: uppercase; color: var(--accent);
+    background: var(--accent-fill); border-radius: 999px;
+    padding: 1px 7px; margin-left: 8px; vertical-align: 1px;
+  }
 
   .cr-escala { display: flex; flex-direction: column; gap: 6px; }
   .cr-escala input[type="range"] { width: 100%; accent-color: var(--accent); }
@@ -184,12 +199,18 @@ const SUBTITULO = "__SUBTITULO__";
 const PREGUNTAS = __PREGUNTAS_JSON__;
 /*
 Formas de pregunta admitidas. En "opcion" y "multiple" la opción "Otra:" con
-texto libre se añade SIEMPRE sola, no hace falta pedirla.
+texto libre se añade SIEMPRE sola, no hace falta pedirla, y "multiple" ya
+muestra su propio aviso de "elige una o varias" sin que haya que añadirlo.
   { tipo: "texto",    pregunta, ayuda? }
   { tipo: "parrafo",  pregunta, ayuda? }
   { tipo: "opcion",   pregunta, ayuda?, opciones: [..] }
   { tipo: "multiple", pregunta, ayuda?, opciones: [..] }
   { tipo: "escala",   pregunta, ayuda?, min?, max?, defecto?, etiquetaMin?, etiquetaMax? }
+
+Cada elemento de "opciones" admite dos formas, mezclables en la misma lista:
+  "Texto de la opción"
+  { texto, ayuda?, nota? }   // ayuda: una frase pequeña debajo del texto.
+                             // nota: insignia corta al lado, p. ej. "recomendada".
 */
 // ---------------------------------------------------------------------
 
@@ -224,6 +245,12 @@ PREGUNTAS.forEach((p, i) => {
   const h = document.createElement("p");
   h.className = "cr-pregunta";
   h.textContent = p.pregunta;
+  if (p.tipo === "multiple") {
+    const badge = document.createElement("span");
+    badge.className = "cr-badge-multi";
+    badge.textContent = "elige una o varias";
+    h.appendChild(badge);
+  }
   card.appendChild(h);
 
   if (p.ayuda) {
@@ -259,10 +286,11 @@ PREGUNTAS.forEach((p, i) => {
       const label = document.createElement("label");
       label.className = "cr-opcion";
       const inp = document.createElement("input");
-      inp.type = tipoInput; inp.name = id; inp.value = op;
+      inp.type = tipoInput; inp.name = id;
       const esOtra = op === "__OTRA__";
       let otraTxt = null;
       if (esOtra) {
+        inp.value = "__OTRA__";
         const span = document.createElement("span");
         span.textContent = "Otra:";
         label.appendChild(inp);
@@ -273,10 +301,28 @@ PREGUNTAS.forEach((p, i) => {
         otraTxt.addEventListener("input", () => { inp.checked = true; refrescar(); });
         label.appendChild(otraTxt);
       } else {
-        const span = document.createElement("span");
-        span.textContent = op;
+        const norm = typeof op === "string" ? { texto: op } : op;
+        inp.value = norm.texto;
+        const cuerpo = document.createElement("span");
+        cuerpo.className = "cr-opcion-cuerpo";
+        const titulo = document.createElement("span");
+        titulo.className = "cr-opcion-titulo";
+        titulo.textContent = norm.texto;
+        if (norm.nota) {
+          const badge = document.createElement("span");
+          badge.className = "cr-badge";
+          badge.textContent = norm.nota;
+          titulo.appendChild(badge);
+        }
+        cuerpo.appendChild(titulo);
+        if (norm.ayuda) {
+          const ayuda = document.createElement("span");
+          ayuda.className = "cr-opcion-ayuda";
+          ayuda.textContent = norm.ayuda;
+          cuerpo.appendChild(ayuda);
+        }
         label.appendChild(inp);
-        label.appendChild(span);
+        label.appendChild(cuerpo);
       }
       inp.addEventListener("change", refrescar);
       wrap.appendChild(label);

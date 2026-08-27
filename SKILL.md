@@ -35,6 +35,11 @@ Las que hagan falta para la decisión. Para cada una decide su tipo:
 
 Una pregunta por decisión: si una pregunta lleva dos cosas dentro, son dos preguntas.
 
+Cada opción de `opcion` o `multiple` puede ser solo texto, o llevar más: `{ texto, ayuda?,
+nota? }`, donde `ayuda` es una frase pequeña debajo (por qué importa esa opción) y `nota` es una
+insignia corta al lado (por ejemplo `"recomendada"`). No hay que elegir un formato para toda la
+lista: una pregunta puede mezclar opciones simples con otras que llevan ayuda o nota.
+
 **Cómo distinguir `opcion` de `multiple`, sin adivinar:** pregúntate si dos de las respuestas
 podrían ser ciertas a la vez. "¿Cuánto cuesta al mes?" es `opcion`, porque un precio excluye a los
 demás. "¿Qué justifica pagar esto?" o "¿qué debe hacer la app?" casi siempre son `multiple`, porque
@@ -43,12 +48,13 @@ varias razones o varias funciones pueden ser verdad al mismo tiempo. Por defecto
 más, no de menos.
 
 **Esto no es negociable, ni siquiera si el cuestionario necesita más diseño del que trae la
-plantilla.** Si hace falta un cuestionario con tablas comparativas, avisos o insignias de
-"recomendada" (contenido que no cabe en el HTML plano de `references/plantilla.html`), se puede
-construir a mano un diseño más rico, pero el comportamiento no se negocia: toda pregunta de opción
-lleva su "Otra:" con texto libre, y toda pregunta donde dos respuestas puedan ser ciertas a la vez
-usa checkboxes, no radios. Un cuestionario hecho a mano sin esto no es una versión simplificada de
-Criteria, es un cuestionario roto que parece Criteria.
+plantilla.** El título, la ayuda y la insignia de arriba ya cubren el caso más común de "necesito
+explicar cada opción y marcar la recomendada". Si aun así hace falta algo que de verdad no cabe
+(una tabla comparativa entera, un aviso grande), se puede construir a mano un diseño más rico,
+pero el comportamiento no se negocia: toda pregunta de opción lleva su "Otra:" con texto libre, y
+toda pregunta donde dos respuestas puedan ser ciertas a la vez usa checkboxes, no radios. Un
+cuestionario hecho a mano sin esto no es una versión simplificada de Criteria, es un cuestionario
+roto que parece Criteria.
 
 ### 2. Adapta la paleta al proyecto donde estás trabajando
 
@@ -62,21 +68,34 @@ debajo no se toca nunca: usa siempre `var(--algo)`, así que hereda el cambio de
 proyecto no tiene un sistema de diseño propio identificable (una tarea sin web, o un repo sin
 frontend), se deja la paleta neutra de la plantilla, ya verificada por contraste WCAG 2.1.
 
-### 3. Genera el archivo
+### 3. Genera el archivo, sin leer la plantilla entera
 
-Copia `references/plantilla.html` de esta skill a una carpeta temporal de la sesión (nunca
-dentro del código del proyecto: es un archivo de trabajo, no un artefacto del producto) como
-`criteria-<tema>.html`, y sustituye estas tres cosas dentro del `<script>` (más la paleta del
-paso 2 si aplica), sin tocar el resto del archivo:
+`references/plantilla.html` no cambia nunca de un cuestionario a otro salvo en tres puntos, así
+que no hace falta cargarla en el contexto para tocarlos: se copia el archivo tal cual (`cp` /
+`Copy-Item`, nunca dentro del código del proyecto, es un archivo de trabajo) a
+`criteria-<tema>.html` en una carpeta temporal de la sesión, y la sustitución de los tres
+marcadores se hace con un comando de una sola pasada que lee y escribe el archivo sin que su
+contenido pase por el modelo:
 
-```js
-const TITULO = "...";           // qué se está decidiendo, en cuatro palabras
-const SUBTITULO = "...";        // una frase: para qué sirve esto y qué pasa al terminar
-const PREGUNTAS = [ ... ];      // el array de preguntas, con las formas de arriba
+```bash
+python3 - "<ruta-al-copia>" <<'EOF'
+import json, sys
+p = sys.argv[1]
+html = open(p, encoding="utf-8").read()
+html = html.replace("__TITULO__", "...")            # qué se está decidiendo, en cuatro palabras
+html = html.replace("__SUBTITULO__", "...")          # una frase: para qué sirve y qué pasa al terminar
+html = html.replace("__PREGUNTAS_JSON__", json.dumps([
+    # ...las preguntas, con las formas del paso 1...
+], ensure_ascii=False))
+open(p, "w", encoding="utf-8").write(html)
+EOF
 ```
 
-El resto del archivo (estilos de estructura, render, barra de progreso, copiar) ya funciona: no
-se reescribe nunca a mano, para no reintroducir un fallo ya resuelto.
+En PowerShell, lo mismo con `-replace` sobre `Get-Content -Raw` y `Set-Content -Encoding utf8`. Si
+el paso 2 exige otra paleta, esos mismos comandos añaden más `-replace`/`.replace()` sobre los
+valores del bloque `PALETA`; el bloque `ESTRUCTURA` nunca se toca. No se usan las herramientas de
+leer y editar archivo sobre `plantilla.html` ni sobre la copia: no hace falta, y cargar un HTML de
+cientos de líneas en el contexto solo para cambiar tres valores es gastar tokens de más.
 
 ### 4. Ábrelo tú mismo
 
@@ -107,8 +126,12 @@ toma la decisión que motivó el cuestionario.
   libre. Es obligatorio en la plantilla, no algo que haya que acordarse de pedir. Escribir ahí la
   marca sola, sin tener que clicar antes su casilla, y la selección se recuerda al recargar la
   página igual que el resto de respuestas.
-- **Selección múltiple de verdad.** `multiple` usa casillas, no radios: se puede marcar más de
-  una a la vez, y el bloque final las junta separadas por comas.
+- **Selección múltiple de verdad, y avisada.** `multiple` usa casillas, no radios: se puede
+  marcar más de una a la vez, el bloque final las junta separadas por comas, y la pregunta lleva
+  sola la insignia "elige una o varias" para que se note sin tener que probar a marcar dos.
+- **Opciones con ayuda e insignia**, cuando la lista sola no basta: cada opción admite una frase
+  de explicación debajo y una insignia corta al lado (por ejemplo "recomendada"), sin tener que
+  escribir HTML a mano ni salirse de la plantilla.
 - **Nada es obligatorio de responder.** Un formulario donde todo es obligatorio no lo rellena
   nadie rápido; el botón copia igual con preguntas en blanco, marcadas como tal.
 - **Copiar con red.** Intenta `navigator.clipboard`, y si el navegador lo bloquea (pasa a veces
