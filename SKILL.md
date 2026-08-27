@@ -40,6 +40,12 @@ nota? }`, donde `ayuda` es una frase pequeña debajo (por qué importa esa opci�
 insignia corta al lado (por ejemplo `"recomendada"`). No hay que elegir un formato para toda la
 lista: una pregunta puede mezclar opciones simples con otras que llevan ayuda o nota.
 
+Si el cuestionario es largo y las preguntas caen en grupos claros (como "la escalera de precios",
+"el móvil", "el dinero"), cualquier pregunta admite un `seccion: "Título del grupo"` opcional. En
+cuanto cambia de una pregunta a la siguiente, se inserta sola una cabecera con letra automática
+(A, B, C...) antes de esa tarjeta. Es solo agrupación visual: la numeración P1, P2... y el formato
+de respuesta no cambian.
+
 **Cómo distinguir `opcion` de `multiple`, sin adivinar:** pregúntate si dos de las respuestas
 podrían ser ciertas a la vez. "¿Cuánto cuesta al mes?" es `opcion`, porque un precio excluye a los
 demás. "¿Qué justifica pagar esto?" o "¿qué debe hacer la app?" casi siempre son `multiple`, porque
@@ -132,6 +138,8 @@ toma la decisión que motivó el cuestionario.
 - **Opciones con ayuda e insignia**, cuando la lista sola no basta: cada opción admite una frase
   de explicación debajo y una insignia corta al lado (por ejemplo "recomendada"), sin tener que
   escribir HTML a mano ni salirse de la plantilla.
+- **Secciones con letra automática**, para cuestionarios largos: agrupar preguntas bajo un
+  `seccion` no cambia su numeración ni el formato de respuesta, solo añade un separador visual.
 - **Nada es obligatorio de responder.** Un formulario donde todo es obligatorio no lo rellena
   nadie rápido; el botón copia igual con preguntas en blanco, marcadas como tal.
 - **Copiar con red.** Intenta `navigator.clipboard`, y si el navegador lo bloquea (pasa a veces

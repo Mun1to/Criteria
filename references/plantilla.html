@@ -72,6 +72,14 @@
   .cr-progreso-texto { font-size: 12px; color: var(--muted); white-space: nowrap; }
   .cr-progreso-texto b { color: var(--text); }
 
+  .cr-seccion { display: flex; align-items: center; gap: 10px; margin: 28px 0 10px; }
+  .cr-seccion:first-child { margin-top: 0; }
+  .cr-seccion-letra {
+    flex: none; width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center;
+    font: var(--w-et) 12px ui-monospace, Consolas, monospace; background: var(--text); color: var(--bg);
+  }
+  .cr-seccion-titulo { font-size: 18px; font-weight: var(--w-fuerte); margin: 0; letter-spacing: -.2px; }
+
   .cr-card {
     background: var(--panel); border: 1px solid var(--line); border-radius: var(--radio);
     padding: 16px 18px; margin: 0 0 14px;
@@ -211,6 +219,12 @@ Cada elemento de "opciones" admite dos formas, mezclables en la misma lista:
   "Texto de la opción"
   { texto, ayuda?, nota? }   // ayuda: una frase pequeña debajo del texto.
                              // nota: insignia corta al lado, p. ej. "recomendada".
+
+Cualquier pregunta admite además "seccion" (opcional): un título de grupo, p. ej.
+"La escalera de niveles". En cuanto una pregunta trae una "seccion" distinta a la
+de la pregunta anterior, se inserta un separador con letra automática (A, B, C...)
+antes de su tarjeta. Es solo agrupación visual para cuestionarios largos: no cambia
+la numeración P1, P2... de cada pregunta ni el formato del bloque de respuesta.
 */
 // ---------------------------------------------------------------------
 
@@ -230,8 +244,27 @@ function guardar(id, valor) {
   actualizarContador();
 }
 const guardado = cargarGuardado();
+const LETRAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+let seccionActual = null;
+let seccionIndice = -1;
 
 PREGUNTAS.forEach((p, i) => {
+  if (p.seccion && p.seccion !== seccionActual) {
+    seccionActual = p.seccion;
+    seccionIndice++;
+    const sec = document.createElement("div");
+    sec.className = "cr-seccion";
+    const letra = document.createElement("span");
+    letra.className = "cr-seccion-letra";
+    letra.textContent = LETRAS[seccionIndice] || String(seccionIndice + 1);
+    const titulo = document.createElement("h2");
+    titulo.className = "cr-seccion-titulo";
+    titulo.textContent = p.seccion;
+    sec.appendChild(letra);
+    sec.appendChild(titulo);
+    cont.appendChild(sec);
+  }
+
   const id = "p" + i;
   const card = document.createElement("div");
   card.className = "cr-card";
