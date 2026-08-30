@@ -277,7 +277,12 @@ PREGUNTAS.forEach((p, i) => {
 
   const h = document.createElement("p");
   h.className = "cr-pregunta";
-  h.textContent = p.pregunta;
+  if (p.pregunta && p.pregunta.trim()) {
+    h.textContent = p.pregunta;
+  } else {
+    h.textContent = "⚠ Falta el texto de esta pregunta (campo \"pregunta\" vacío o ausente)";
+    h.style.color = "var(--bad)";
+  }
   if (p.tipo === "multiple") {
     const badge = document.createElement("span");
     badge.className = "cr-badge-multi";
