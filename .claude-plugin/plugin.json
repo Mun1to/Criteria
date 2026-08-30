@@ -1,7 +1,7 @@
 {
   "name": "criteria",
   "description": "Turns several loose questions into a one-file HTML questionnaire with a progress bar, real multi-select checkboxes, a mandatory \"Other\" option, and a button that copies every answer as one block of text to paste back into the chat.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "Mun1to",
     "url": "https://github.com/Mun1to"

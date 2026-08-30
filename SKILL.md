@@ -35,6 +35,21 @@ Las que hagan falta para la decisión. Para cada una decide su tipo:
 
 Una pregunta por decisión: si una pregunta lleva dos cosas dentro, son dos preguntas.
 
+**Antes de dar la lista por cerrada, pasa cada pregunta por dos filtros, sin excepción:**
+
+- **¿hace falta de verdad?** Si la respuesta no va a cambiar nada de lo que se hace después,
+  la pregunta sobra. No se pregunta por rellenar el cuestionario ni "por si acaso": cada
+  pregunta de más es tiempo perdido de quien tiene que contestarla.
+- **¿se entiende a la primera lectura?** Frase corta, una sola idea, sin jerga que quien
+  responde no tenga por qué conocer. Si hace falta contexto para que la pregunta se entienda,
+  ese contexto va en `ayuda` (ver debajo), nunca amontonado dentro del título hasta hacerlo
+  largo o técnico.
+
+Repasa la lista entera con estos dos filtros antes de pasar al paso 2: quita toda pregunta que
+no vaya a cambiar nada, y reescribe toda pregunta que haya que releer dos veces para saber qué
+está pidiendo. Un cuestionario de cuarenta preguntas donde media docena son ruido no es más
+completo que uno de treinta y cuatro, es solo más largo y más pesado de rellenar.
+
 Cada opción de `opcion` o `multiple` puede ser solo texto, o llevar más: `{ texto, ayuda?,
 nota? }`, donde `ayuda` es una frase pequeña debajo (por qué importa esa opción) y `nota` es una
 insignia corta al lado (por ejemplo `"recomendada"`). No hay que elegir un formato para toda la
