@@ -286,7 +286,7 @@ function ficha(o, j, conNombre) {
   if (o.malo) h += '<div class="cr-m"><dt>Lo malo</dt><dd>' + esc(o.malo) + '</dd></div>';
   if (o.bueno) h += '<div class="cr-b"><dt>Lo bueno</dt><dd>' + esc(o.bueno) + '</dd></div>';
   if (o.cuesta) h += '<div><dt>Te cuesta</dt><dd>' + esc(o.cuesta) + '</dd></div>';
-  if (o.noHace) h += '<div><dt>No hace</dt><dd>' + esc(o.noHace) + '</dd></div>';
+  if (o.noHace) h += '<div><dt>No hace</dt><dd>' + esc(String(o.noHace).charAt(0).toUpperCase() + String(o.noHace).slice(1)) + '</dd></div>';
   return (conNombre && (h || o.porque) ? '<p class="cr-elegida">' + (j + 1) + ' · ' + esc(o.texto) + '</p>' : '') +
     (o.recomendada && o.porque ? '<p class="cr-porque"><b>Por qué te la recomiendo:</b> ' + esc(o.porque) + '</p>' : '') +
     (h ? '<dl class="cr-ficha">' + h + '</dl>' : '');
