@@ -7,163 +7,141 @@
 <style>
   /* ===================================================================
      PALETA, lo único que se toca al adaptar esto al proyecto donde se usa.
-     Por defecto lleva una paleta neutra de cuatro colores por tema, medidos
-     por contraste WCAG 2.1. Si el proyecto activo tiene su propio sistema
-     de tokens (variables de color, radios, tipo de letra), esos valores se
+     Por defecto lleva una paleta neutra por tema, medida por contraste
+     WCAG 2.1. Si el proyecto activo tiene su propio sistema de tokens
+     (variables de color, radios, tipo de letra), esos valores se
      sustituyen aquí por los suyos; si un hex se toca a mano, se vuelve a
      medir el contraste, no se ajusta mirando. El resto del CSS de abajo
      (ESTRUCTURA) usa siempre var(--algo) y no hay que tocarlo para que el
      cambio de piel se refleje solo.
      =================================================================== */
   :root {
-    font-family: "Segoe UI Variable Display", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
-    font-size: 15.5px;
-    line-height: 1.5;
-    letter-spacing: .05px;
+    font-family: "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, -apple-system, Roboto, sans-serif;
+    --letra-titulos: "Segoe UI Variable Display", "Segoe UI", Inter, system-ui, -apple-system, Roboto, sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
-    --w-cuerpo: 600;
-    --w-fuerte: 720;
-    --w-et: 800;
     --radio: 12px;
     --panel: color-mix(in srgb, var(--bg) 100%, var(--vuelta) 4%);
-    --panel2: color-mix(in srgb, var(--bg) 100%, var(--vuelta) 2%);
     --line: color-mix(in srgb, var(--bg) 100%, var(--vuelta) 13%);
-    --line-soft: color-mix(in srgb, var(--bg) 100%, var(--vuelta) 7%);
     --hueco: color-mix(in srgb, var(--bg) 100%, var(--hundir) 40%);
-    --accent-soft: color-mix(in srgb, var(--accent) 74%, var(--vuelta));
-    --accent-fill: color-mix(in srgb, var(--accent) 14%, var(--bg));
+    --boton-suave: color-mix(in srgb, var(--accent) 24%, var(--bg));
   }
   :root {
     color-scheme: light;
     --vuelta: #000000; --hundir: #ffffff;
     --bg: #f4f5f7; --text: #1a1d21; --text-dim: #33383f; --muted: #5c636d; --faint: #858c96;
-    --accent: #1f6fc0; --sobre: #ffffff; --ok: #137a52; --warn: #9c6b0f; --bad: #c33a2c;
+    --accent: #1f6fc0; --accent-text: #1f6fc0; --sobre: #ffffff; --ok: #137a52; --warn: #9c6b0f; --bad: #c33a2c;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       color-scheme: dark;
       --vuelta: #ffffff; --hundir: #000000;
-      --bg: #17191c; --text: #e8eaed; --text-dim: #c5cbd3; --muted: #9aa1ab; --faint: #6b727c;
-      --accent: #3d8ee0; --sobre: #06090c; --ok: #35b37e; --warn: #d7a13a; --bad: #e05c4e;
+      --bg: #17191c; --text: #e8eaed; --text-dim: #c5cbd3; --muted: #a3aab4; --faint: #8a919b;
+      --accent: #2f6fb8; --accent-text: #8fbaf0; --sobre: #ffffff; --ok: #35b37e; --warn: #d7a13a; --bad: #ef7a6d;
     }
   }
   /* =================== ESTRUCTURA, no se toca al adaptar =============== */
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   body { margin: 0; background: var(--bg); color: var(--text); }
-  .cr-wrap { max-width: 720px; margin: 0 auto; padding: 24px 22px 140px; }
-  .cr-head h1 { font-size: 22px; font-weight: var(--w-fuerte); letter-spacing: -.3px; margin: 0 0 8px; }
-  .cr-sub { color: var(--muted); font-size: 14px; margin: 0 0 4px; }
-  .cr-meta { color: var(--faint); font-size: 12.5px; margin: 0 0 28px; }
+  h1, h2, .cr-palabra { font-family: var(--letra-titulos); }
+  .cr-wrap { max-width: 1040px; min-height: 100svh; margin: 0 auto; padding: 24px 16px 140px; }
+  .cr-head h1 { font-size: 28px; font-weight: 800; line-height: 1.2; margin: 0 0 6px; }
+  .cr-sub { color: var(--muted); margin: 0 0 4px; }
+  .cr-meta { color: var(--muted); font-size: 15px; margin: 0 0 26px; }
 
-  .cr-progreso-top {
-    position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line);
-  }
-  .cr-progreso-inner {
-    max-width: 720px; margin: 0 auto; padding: 14px 22px 12px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .cr-progreso-track {
-    flex: 1; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden;
-  }
-  .cr-progreso-fill {
-    height: 100%; width: 0%; background: var(--accent); border-radius: 999px;
-    transition: width .25s ease;
-  }
-  .cr-progreso-texto { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  /* Arriba y siempre a la vista: cuántas van respondidas. */
+  .cr-progreso-top { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+  .cr-progreso-inner { max-width: 1040px; margin: 0 auto; padding: 14px 16px 12px; display: flex; align-items: center; gap: 14px; }
+  .cr-progreso-track { flex: 1; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+  .cr-progreso-fill { height: 100%; width: 0%; background: var(--accent-text); transition: width .25s ease; }
+  .cr-progreso-texto { font-size: 15px; color: var(--muted); white-space: nowrap; }
   .cr-progreso-texto b { color: var(--text); }
 
-  .cr-seccion { display: flex; align-items: center; gap: 10px; margin: 28px 0 10px; }
-  .cr-seccion:first-child { margin-top: 0; }
-  .cr-seccion-letra {
-    flex: none; width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center;
-    font: var(--w-et) 12px ui-monospace, Consolas, monospace; background: var(--text); color: var(--bg);
-  }
-  .cr-seccion-titulo { font-size: 18px; font-weight: var(--w-fuerte); margin: 0; letter-spacing: -.2px; }
+  /* Una pregunta cada vez. */
+  .cr-seccion { color: var(--accent-text); font-weight: 700; margin: 0 0 4px; }
+  .cr-cuenta { color: var(--muted); font-weight: 600; margin: 0 0 6px; }
+  .cr-pregunta { font-size: 25px; font-weight: 800; line-height: 1.25; margin: 0 0 6px; }
+  .cr-pregunta.cr-falta { color: var(--bad); }
+  .cr-ayuda { color: var(--muted); margin: 0 0 4px; }
+  .cr-pista { color: var(--muted); margin: 4px 0 0; }
+  .cr-sino { color: var(--muted); font-size: 16px; margin: 12px 0 0; }
 
-  .cr-card {
-    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radio);
-    padding: 16px 18px; margin: 0 0 14px;
-  }
-  .cr-card[data-respondida="1"] { border-color: var(--accent-soft); }
-  .cr-num {
-    display: inline-block; font: var(--w-et) 11px ui-monospace, Consolas, monospace;
-    letter-spacing: .5px; color: var(--accent); background: var(--accent-fill);
-    border-radius: 999px; padding: 2px 9px; margin-bottom: 8px;
-  }
-  .cr-pregunta { font-size: 15.5px; font-weight: var(--w-fuerte); margin: 0 0 4px; }
-  .cr-ayuda { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
-  .cr-campo { width: 100%; }
+  /* Las respuestas para elegir: la palabra grande, la frase debajo, su marca al tocarla. */
+  .cr-baldosas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 16px 0 14px; }
+  .cr-baldosas.n2, .cr-baldosas.n4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cr-baldosa { position: relative; display: flex; flex-direction: column; align-items: flex-start; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer;
+    background: var(--panel); border: 2px solid var(--line); border-radius: var(--radio); padding: 14px 46px 14px 16px; transition: background .15s, border-color .15s; }
+  @media (hover: hover) { .cr-baldosa:hover { border-color: var(--accent-text); } }
+  .cr-baldosa svg { width: 24px; height: 24px; color: var(--accent-text); display: block; margin-bottom: 8px; }
+  .cr-palabra { display: block; font-size: 19px; font-weight: 800; line-height: 1.25; }
+  .cr-palabra.cr-larga { font-size: 17px; font-weight: 600; line-height: 1.4; }
+  .cr-frase { display: block; color: var(--muted); font-size: 16px; line-height: 1.45; margin-top: 4px; }
+  .cr-rec { display: block; color: var(--accent-text); font-weight: 700; font-size: 15px; margin-top: 8px; }
+  .cr-baldosa::after { content: ""; position: absolute; right: 14px; top: 14px; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--muted); }
+  .cr-varias .cr-baldosa::after { border-radius: 5px; }
+  .cr-baldosa[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--sobre); }
+  .cr-baldosa[aria-pressed="true"] svg, .cr-baldosa[aria-pressed="true"] .cr-frase, .cr-baldosa[aria-pressed="true"] .cr-rec { color: var(--sobre); }
+  .cr-baldosa[aria-pressed="true"]::after { border-color: var(--sobre); background: radial-gradient(circle, var(--sobre) 0 5px, transparent 6px); }
+  .cr-varias .cr-baldosa[aria-pressed="true"]::after { background: linear-gradient(var(--sobre), var(--sobre)) center / 10px 10px no-repeat; }
 
-  input[type="text"], textarea.cr-campo {
-    width: 100%; background: var(--hueco); color: var(--text); border: 1px solid var(--line);
-    border-radius: 9px; padding: 10px 12px; font: inherit; resize: vertical;
-  }
-  textarea.cr-campo { min-height: 74px; }
-  input[type="text"]:focus, textarea.cr-campo:focus, input[type="range"]:focus-visible {
-    outline: 2px solid var(--accent); outline-offset: 1px;
-  }
+  /* Lo malo, lo bueno y lo que cuesta de la elegida, en una línea cada uno. */
+  .cr-elegida { font-weight: 800; margin: 14px 0 4px; }
+  .cr-porque { margin: 0 0 10px; }
+  .cr-porque b { color: var(--accent-text); }
+  .cr-ficha { display: grid; gap: 6px; margin: 4px 0 12px; }
+  .cr-ficha div { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 10px; }
+  .cr-ficha dt { font-weight: 700; }
+  .cr-ficha dd { margin: 0; }
+  .cr-ficha .cr-m dt { color: var(--bad); }
+  .cr-ficha .cr-b dt { color: var(--ok); }
 
-  .cr-opciones { display: flex; flex-direction: column; gap: 8px; }
-  .cr-opcion {
-    display: flex; align-items: center; gap: 10px; padding: 9px 12px;
-    border: 1px solid var(--line); border-radius: 9px; background: var(--panel2); cursor: pointer;
+  input[type="text"], textarea.cr-campo, textarea.cr-otra {
+    display: block; width: 100%; background: var(--hueco); color: var(--text); border: 2px solid var(--line);
+    border-radius: 10px; padding: 11px 12px; font: inherit; font-size: 16px; resize: none; overflow: hidden; margin-top: 14px;
   }
-  .cr-opcion:has(input:checked) { border-color: var(--accent); background: var(--accent-fill); }
-  .cr-opcion input { accent-color: var(--accent); width: 16px; height: 16px; flex: none; margin-top: 2px; }
-  .cr-opcion span { font-size: 14px; }
-  .cr-opcion .cr-otra-txt { flex: 1; }
-  .cr-opcion-cuerpo { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-  .cr-opcion-titulo { font-size: 14px; }
-  .cr-opcion-ayuda { color: var(--muted); font-size: 12.5px; }
-  .cr-badge {
-    display: inline-block; font: var(--w-et) 10px ui-monospace, Consolas, monospace;
-    letter-spacing: .4px; text-transform: uppercase; color: var(--ok);
-    background: color-mix(in srgb, var(--ok) 16%, var(--bg)); border-radius: 999px;
-    padding: 1px 7px; margin-left: 7px; vertical-align: 1px;
-  }
-  .cr-badge-multi {
-    display: inline-block; font: var(--w-et) 10px ui-monospace, Consolas, monospace;
-    letter-spacing: .4px; text-transform: uppercase; color: var(--accent);
-    background: var(--accent-fill); border-radius: 999px;
-    padding: 1px 7px; margin-left: 8px; vertical-align: 1px;
-  }
+  textarea.cr-otra { margin-top: 6px; min-height: 52px; }
+  textarea.cr-campo { min-height: 110px; }
+  ::placeholder { color: var(--muted); opacity: 1; }
+  .cr-baldosa:focus-visible, .cr-boton:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; }
 
-  .cr-escala { display: flex; flex-direction: column; gap: 6px; }
-  .cr-escala input[type="range"] { width: 100%; accent-color: var(--accent); }
-  .cr-escala-fila { display: flex; justify-content: space-between; font-size: 12px; color: var(--faint); }
-  .cr-escala-valor { font-weight: var(--w-fuerte); color: var(--accent); font-size: 15px; }
+  .cr-escala { display: flex; flex-direction: column; gap: 6px; margin-top: 18px; }
+  .cr-escala input[type="range"] { width: 100%; height: 32px; accent-color: var(--accent); }
+  .cr-escala-fila { display: flex; justify-content: space-between; gap: 16px; font-size: 15px; color: var(--muted); }
+  .cr-escala-valor { font-family: var(--letra-titulos); font-weight: 800; color: var(--text); font-size: 34px; line-height: 1; }
 
-  .cr-pie {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
-    background: var(--panel); border-top: 1px solid var(--line);
-    padding: 12px 22px; display: flex; justify-content: center;
-  }
-  .cr-pie-inner { max-width: 720px; width: 100%; display: flex; justify-content: flex-end; }
-  #cr-boton {
-    font: inherit; font-weight: var(--w-fuerte); font-size: 14px; cursor: pointer;
-    background: var(--accent); color: var(--sobre); border: none; border-radius: 9px;
-    padding: 11px 20px;
-  }
-  #cr-boton:active { transform: translateY(1px); }
+  .cr-boton { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 22px; border-radius: 10px; border: 0; cursor: pointer; white-space: nowrap;
+    font: 700 16px/1.2 var(--letra-titulos); background: var(--boton-suave); color: var(--text); }
+  .cr-boton.cr-fuerte { background: var(--accent); color: var(--sobre); box-shadow: 0 10px 28px -14px var(--accent); }
+  .cr-botones { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 18px; }
+
+  .cr-resumen { list-style: none; margin: 14px 0 18px; padding: 0; display: grid; gap: 16px; }
+  .cr-resumen li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; }
+  .cr-resumen b { display: block; }
+  .cr-resumen .cr-vacia { color: var(--muted); }
+
+  .cr-pie { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: color-mix(in srgb, var(--panel) 94%, transparent); border-top: 1px solid var(--line); backdrop-filter: blur(8px); padding: 12px 16px; }
+  .cr-pie-inner { max-width: 1040px; margin: 0 auto; display: flex; justify-content: center; }
 
   .cr-resultado {
-    position: fixed; left: 0; right: 0; bottom: 62px; z-index: 6;
-    max-width: 720px; margin: 0 auto; left: 0; right: 0;
-    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radio);
+    position: fixed; left: 0; right: 0; bottom: 74px; z-index: 6; margin: 0 auto; width: min(720px, calc(100% - 32px));
+    background: var(--panel); border: 2px solid var(--line); border-radius: var(--radio);
     padding: 14px 16px; box-shadow: 0 8px 28px rgba(0,0,0,.28);
-    width: min(720px, calc(100% - 44px));
   }
-  .cr-resultado[hidden] { display: none; }
-  .cr-resultado-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .cr-resultado-head strong { font-size: 13px; color: var(--ok); flex: 1; }
-  .cr-resultado-head button {
-    font: inherit; font-size: 12.5px; cursor: pointer; background: var(--panel2);
-    color: var(--muted); border: 1px solid var(--line); border-radius: 7px; padding: 5px 10px;
-  }
+  .cr-resultado-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+  .cr-resultado-head strong { color: var(--ok); flex: 1; min-width: 12em; }
+  .cr-resultado-head .cr-boton { min-height: 40px; padding: 8px 14px; font-size: 15px; }
   #cr-texto {
-    width: 100%; min-height: 130px; background: var(--hueco); color: var(--text-dim);
-    border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px;
-    font: 12.5px ui-monospace, Consolas, monospace; resize: vertical;
+    width: 100%; min-height: 150px; background: var(--hueco); color: var(--text-dim);
+    border: 2px solid var(--line); border-radius: 10px; padding: 10px 12px;
+    font: 14px/1.5 ui-monospace, Consolas, monospace; resize: none;
+  }
+  @media (max-width: 860px) {
+    .cr-baldosas, .cr-baldosas.n2, .cr-baldosas.n4 { grid-template-columns: minmax(0, 1fr); }
+    .cr-head h1 { font-size: 24px; }
+    .cr-pregunta { font-size: 22px; }
+    .cr-ficha div { grid-template-columns: 92px minmax(0, 1fr); }
   }
 </style>
 </head>
@@ -171,7 +149,7 @@
 <div class="cr-progreso-top">
   <div class="cr-progreso-inner">
     <div class="cr-progreso-track"><div class="cr-progreso-fill" id="cr-progreso-fill"></div></div>
-    <div class="cr-progreso-texto"><b id="cr-contador">0</b>/<span id="cr-total">0</span> respondidas</div>
+    <div class="cr-progreso-texto"><b id="cr-contador">0</b> de <span id="cr-total">0</span> respondidas</div>
   </div>
 </div>
 
@@ -179,22 +157,22 @@
   <header class="cr-head">
     <h1 id="cr-titulo"></h1>
     <p class="cr-sub" id="cr-subtitulo"></p>
-    <p class="cr-meta">Nada aquí es obligatorio: responde lo que sepas y copia el bloque cuando termines.</p>
+    <p class="cr-meta">Una pregunta cada vez. Nada es obligatorio: contesta lo que sepas y copia el bloque al final.</p>
   </header>
-  <div id="cr-preguntas"></div>
+  <div id="cr-vista"></div>
 </main>
 
 <div class="cr-resultado" id="cr-resultado" hidden>
   <div class="cr-resultado-head">
     <strong id="cr-estado">Bloque listo</strong>
-    <button type="button" id="cr-copiar-otra-vez">Copiar de nuevo</button>
-    <button type="button" id="cr-cerrar-resultado">Cerrar</button>
+    <button type="button" class="cr-boton" id="cr-copiar-otra-vez">Copiar de nuevo</button>
+    <button type="button" class="cr-boton" id="cr-cerrar-resultado">Cerrar</button>
   </div>
-  <textarea id="cr-texto" readonly></textarea>
+  <textarea id="cr-texto" readonly aria-label="Tus respuestas"></textarea>
 </div>
 
 <footer class="cr-pie">
-  <div class="cr-pie-inner"><button type="button" id="cr-boton">Copiar respuestas</button></div>
+  <div class="cr-pie-inner"><button type="button" class="cr-boton" id="cr-boton">Copiar respuestas</button></div>
 </footer>
 
 <script>
@@ -206,36 +184,66 @@ const TITULO = "__TITULO__";
 const SUBTITULO = "__SUBTITULO__";
 const PREGUNTAS = __PREGUNTAS_JSON__;
 /*
-Formas de pregunta admitidas. En "opcion" y "multiple" la opción "Otra:" con
-texto libre se añade SIEMPRE sola, no hace falta pedirla, y "multiple" ya
-muestra su propio aviso de "elige una o varias" sin que haya que añadirlo.
-  { tipo: "texto",    pregunta, ayuda? }
-  { tipo: "parrafo",  pregunta, ayuda? }
-  { tipo: "opcion",   pregunta, ayuda?, opciones: [..] }
-  { tipo: "multiple", pregunta, ayuda?, opciones: [..] }
-  { tipo: "escala",   pregunta, ayuda?, min?, max?, defecto?, etiquetaMin?, etiquetaMax? }
+Se ve una pregunta cada vez, con «Siguiente» para pasar, y al final lo que se
+ha contestado con un solo «Copiar respuestas». Formas de pregunta admitidas.
+En "opcion" y "multiple" el hueco «Otra» con texto libre va SIEMPRE solo, no
+hace falta pedirlo, y "multiple" ya avisa de que se puede elegir más de una.
+  { tipo: "texto",    pregunta, ayuda?, siNoDices? }
+  { tipo: "parrafo",  pregunta, ayuda?, siNoDices? }
+  { tipo: "opcion",   pregunta, ayuda?, siNoDices?, opciones: [..] }
+  { tipo: "multiple", pregunta, ayuda?, siNoDices?, opciones: [..] }
+  { tipo: "escala",   pregunta, ayuda?, siNoDices?, min?, max?, defecto?, etiquetaMin?, etiquetaMax? }
+  ayuda: por qué se pregunta ahora, en una línea. siNoDices: qué pasa si no se contesta.
 
 Cada elemento de "opciones" admite dos formas, mezclables en la misma lista:
   "Texto de la opción"
-  { texto, ayuda?, nota? }   // ayuda: una frase pequeña debajo del texto.
-                             // nota: insignia corta al lado, p. ej. "recomendada".
+  { texto, ayuda?, recomendada?, porque?, malo?, bueno?, cuesta?, noHace?, icono?, nota? }
+    texto: la palabra, grande (de una a tres palabras rinde mejor).
+    ayuda: la frase de debajo, lo que pasa si se elige.
+    recomendada: true en una sola; "porque" dice por qué. Nunca sale marcada de antemano.
+    malo, bueno, cuesta: una línea cada uno; salen al pulsar la opción.
+    noHace: lo que NO incluye, si se puede leer de dos maneras.
+    icono: si, no, ya, esperar, pregunta, gente, dinero, texto, igual, estrella, lapiz, flecha o escudo.
+    nota: una palabra o dos debajo, en el color de acento (p. ej. "la más barata").
 
 Cualquier pregunta admite además "seccion" (opcional): un título de grupo, p. ej.
-"La escalera de niveles". En cuanto una pregunta trae una "seccion" distinta a la
-de la pregunta anterior, se inserta un separador con letra automática (A, B, C...)
-antes de su tarjeta. Es solo agrupación visual para cuestionarios largos: no cambia
-la numeración P1, P2... de cada pregunta ni el formato del bloque de respuesta.
+"La escalera de niveles". Sale encima de la pregunta con letra automática (A, B,
+C...) en cuanto cambia de una pregunta a la siguiente. No cambia la numeración
+P1, P2... de cada pregunta ni el formato del bloque de respuesta.
 */
 // ---------------------------------------------------------------------
 
 const CLAVE = "criteria:" + location.pathname;
-const cont = document.getElementById("cr-preguntas");
-document.getElementById("cr-titulo").textContent = TITULO;
-document.getElementById("cr-subtitulo").textContent = SUBTITULO;
-document.getElementById("cr-total").textContent = PREGUNTAS.length;
+const N = PREGUNTAS.length;
+const LETRAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const IC = {
+  si: '<polyline points="4 12.5 9.5 18 20 6.5"/>',
+  no: '<path d="M6 6l12 12M18 6L6 18"/>',
+  ya: '<path d="M7 4.5v15l12-7.5z"/>',
+  esperar: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  pregunta: '<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.7.3-1 .8-1 1.5v.7"/><path d="M12 17h.01"/>',
+  gente: '<circle cx="9" cy="8" r="3.5"/><path d="M3 20c.4-3.4 2.9-5.5 6-5.5s5.6 2.1 6 5.5"/><path d="M15.5 4.8a3.5 3.5 0 0 1 0 6.4M17.5 14.8c2 .7 3.2 2.5 3.5 5.2"/>',
+  dinero: '<circle cx="12" cy="12" r="9"/><path d="M15 8.6a4 4 0 1 0 0 6.8M7.5 10.6h5.5M7.5 13.4h5.5"/>',
+  texto: '<path d="M5 6h14M12 6v13M9 19h6"/>',
+  igual: '<path d="M5 9h14M5 15h14"/>',
+  estrella: '<path d="M12 3.5l2.6 5.6 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6-4.5-4.1 6-.7z"/>',
+  lapiz: '<path d="M4 20l1-4.5L16 4.5l3.5 3.5L8.5 19z"/><path d="M13.5 7l3.5 3.5"/>',
+  flecha: '<path d="M4 12h15M13 6l6 6-6 6"/>',
+  escudo: '<path d="M12 3l8 3v6c0 4.6-3.3 7.9-8 9-4.7-1.1-8-4.4-8-9V6z"/>'
+};
+const icono = (n) => IC[n] ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[n] + '</svg>' : "";
+const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const $ = (id) => document.getElementById(id);
+const opcionesDe = (p) => (p.opciones || []).map((o) => typeof o === "string" ? { texto: o } : o);
+const esOtra = (v) => v === "Otra" || String(v).startsWith("Otra: ");
+
+document.title = TITULO;
+$("cr-titulo").textContent = TITULO;
+$("cr-subtitulo").textContent = SUBTITULO;
+$("cr-total").textContent = N;
 
 function cargarGuardado() {
-  try { return JSON.parse(localStorage.getItem(CLAVE) || "{}"); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(CLAVE) || "{}") || {}; } catch { return {}; }
 }
 function guardar(id, valor) {
   const g = cargarGuardado();
@@ -243,234 +251,182 @@ function guardar(id, valor) {
   try { localStorage.setItem(CLAVE, JSON.stringify(g)); } catch {}
   actualizarContador();
 }
-const guardado = cargarGuardado();
-const LETRAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-let seccionActual = null;
-let seccionIndice = -1;
+let paso = 0;
+try { paso = Math.max(0, Math.min(N, parseInt(localStorage.getItem(CLAVE + ":paso") || "0", 10) || 0)); } catch {}
+function irA(n) {
+  paso = Math.max(0, Math.min(N, n));
+  try { localStorage.setItem(CLAVE + ":paso", String(paso)); } catch {}
+  pintar();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
-PREGUNTAS.forEach((p, i) => {
-  if (p.seccion && p.seccion !== seccionActual) {
-    seccionActual = p.seccion;
-    seccionIndice++;
-    const sec = document.createElement("div");
-    sec.className = "cr-seccion";
-    const letra = document.createElement("span");
-    letra.className = "cr-seccion-letra";
-    letra.textContent = LETRAS[seccionIndice] || String(seccionIndice + 1);
-    const titulo = document.createElement("h2");
-    titulo.className = "cr-seccion-titulo";
-    titulo.textContent = p.seccion;
-    sec.appendChild(letra);
-    sec.appendChild(titulo);
-    cont.appendChild(sec);
-  }
+// La letra de cada sección, contada en el orden en que aparecen.
+const seccionDe = [];
+(() => { let actual = null, k = -1; PREGUNTAS.forEach((p, i) => { if (p.seccion && p.seccion !== actual) { actual = p.seccion; k++; } seccionDe[i] = p.seccion ? (LETRAS[k] || String(k + 1)) + " · " + p.seccion : ""; }); })();
 
-  const id = "p" + i;
-  const card = document.createElement("div");
-  card.className = "cr-card";
-  card.id = "card-" + id;
+function respondida(i) {
+  const v = cargarGuardado()["p" + i];
+  return v != null && String(Array.isArray(v) ? v.join(",") : v).trim().length > 0;
+}
+// Lo que se copia de una opción lleva su número, para poder decir «P2, la 3».
+function conNumero(p, v) {
+  if (esOtra(v)) return v;
+  const j = opcionesDe(p).findIndex((o) => o.texto === v);
+  return j >= 0 ? (j + 1) + " · " + v : v;
+}
+function respuestaTexto(i) {
+  const p = PREGUNTAS[i], v = cargarGuardado()["p" + i];
+  if (v == null || (Array.isArray(v) && v.length === 0) || String(v).trim() === "") return "";
+  if (Array.isArray(v)) return v.map((x) => conNumero(p, x)).join(", ");
+  return String(v);
+}
 
-  const num = document.createElement("span");
-  num.className = "cr-num";
-  num.textContent = "P" + (i + 1);
-  card.appendChild(num);
+function ficha(o, j, conNombre) {
+  let h = "";
+  if (o.malo) h += '<div class="cr-m"><dt>Lo malo</dt><dd>' + esc(o.malo) + '</dd></div>';
+  if (o.bueno) h += '<div class="cr-b"><dt>Lo bueno</dt><dd>' + esc(o.bueno) + '</dd></div>';
+  if (o.cuesta) h += '<div><dt>Te cuesta</dt><dd>' + esc(o.cuesta) + '</dd></div>';
+  if (o.noHace) h += '<div><dt>No hace</dt><dd>' + esc(o.noHace) + '</dd></div>';
+  return (conNombre && (h || o.porque) ? '<p class="cr-elegida">' + (j + 1) + ' · ' + esc(o.texto) + '</p>' : '') +
+    (o.recomendada && o.porque ? '<p class="cr-porque"><b>Por qué te la recomiendo:</b> ' + esc(o.porque) + '</p>' : '') +
+    (h ? '<dl class="cr-ficha">' + h + '</dl>' : '');
+}
 
-  const h = document.createElement("p");
-  h.className = "cr-pregunta";
-  if (p.pregunta && p.pregunta.trim()) {
-    h.textContent = p.pregunta;
-  } else {
-    h.textContent = "⚠ Falta el texto de esta pregunta (campo \"pregunta\" vacío o ausente)";
-    h.style.color = "var(--bad)";
-  }
-  if (p.tipo === "multiple") {
-    const badge = document.createElement("span");
-    badge.className = "cr-badge-multi";
-    badge.textContent = "elige una o varias";
-    h.appendChild(badge);
-  }
-  card.appendChild(h);
-
-  if (p.ayuda) {
-    const a = document.createElement("p");
-    a.className = "cr-ayuda";
-    a.textContent = p.ayuda;
-    card.appendChild(a);
-  }
-
-  const prev = guardado[id];
+function pintarPregunta(i) {
+  const p = PREGUNTAS[i], id = "p" + i, g = cargarGuardado(), prev = g[id];
+  let h = "";
+  if (seccionDe[i]) h += '<p class="cr-seccion">' + esc(seccionDe[i]) + '</p>';
+  h += '<p class="cr-cuenta">Pregunta ' + (i + 1) + ' de ' + N + '</p>';
+  h += p.pregunta && String(p.pregunta).trim()
+    ? '<h2 class="cr-pregunta">' + esc(p.pregunta) + '</h2>'
+    : '<h2 class="cr-pregunta cr-falta">Falta el texto de esta pregunta (campo "pregunta" vacío o ausente)</h2>';
+  if (p.ayuda) h += '<p class="cr-ayuda">' + esc(p.ayuda) + '</p>';
 
   if (p.tipo === "texto") {
-    const inp = document.createElement("input");
-    inp.type = "text"; inp.className = "cr-campo"; inp.id = id;
-    if (prev) inp.value = prev;
-    inp.addEventListener("input", () => guardar(id, inp.value));
-    card.appendChild(inp);
-
+    h += '<input type="text" class="cr-campo" id="cr-campo" aria-label="Tu respuesta" value="' + esc(prev || "") + '">';
   } else if (p.tipo === "parrafo") {
-    const ta = document.createElement("textarea");
-    ta.className = "cr-campo"; ta.id = id;
-    if (prev) ta.value = prev;
-    ta.addEventListener("input", () => guardar(id, ta.value));
-    card.appendChild(ta);
-
+    h += '<textarea class="cr-campo" id="cr-campo" rows="3" aria-label="Tu respuesta">' + esc(prev || "") + '</textarea>';
   } else if (p.tipo === "opcion" || p.tipo === "multiple") {
-    const wrap = document.createElement("div");
-    wrap.className = "cr-opciones";
-    wrap.id = id;
-    const tipoInput = p.tipo === "opcion" ? "radio" : "checkbox";
-    const opciones = [...p.opciones, "__OTRA__"];
-    opciones.forEach((op, j) => {
-      const label = document.createElement("label");
-      label.className = "cr-opcion";
-      const inp = document.createElement("input");
-      inp.type = tipoInput; inp.name = id;
-      const esOtra = op === "__OTRA__";
-      let otraTxt = null;
-      if (esOtra) {
-        inp.value = "__OTRA__";
-        const span = document.createElement("span");
-        span.textContent = "Otra:";
-        label.appendChild(inp);
-        label.appendChild(span);
-        otraTxt = document.createElement("input");
-        otraTxt.type = "text"; otraTxt.className = "cr-otra-txt";
-        otraTxt.placeholder = "escribe aquí";
-        otraTxt.addEventListener("input", () => { inp.checked = true; refrescar(); });
-        label.appendChild(otraTxt);
-      } else {
-        const norm = typeof op === "string" ? { texto: op } : op;
-        inp.value = norm.texto;
-        const cuerpo = document.createElement("span");
-        cuerpo.className = "cr-opcion-cuerpo";
-        const titulo = document.createElement("span");
-        titulo.className = "cr-opcion-titulo";
-        titulo.textContent = norm.texto;
-        if (norm.nota) {
-          const badge = document.createElement("span");
-          badge.className = "cr-badge";
-          badge.textContent = norm.nota;
-          titulo.appendChild(badge);
-        }
-        cuerpo.appendChild(titulo);
-        if (norm.ayuda) {
-          const ayuda = document.createElement("span");
-          ayuda.className = "cr-opcion-ayuda";
-          ayuda.textContent = norm.ayuda;
-          cuerpo.appendChild(ayuda);
-        }
-        label.appendChild(inp);
-        label.appendChild(cuerpo);
-      }
-      inp.addEventListener("change", refrescar);
-      wrap.appendChild(label);
-
-      function refrescar() {
-        const marcados = [...wrap.querySelectorAll("input:checked")].map(c => {
-          if (c.value === "__OTRA__") return otraTxt.value.trim() ? "Otra: " + otraTxt.value.trim() : "Otra";
-          return c.value;
-        });
-        guardar(id, marcados);
-      }
+    const ops = opcionesDe(p), marcadas = Array.isArray(prev) ? prev : [];
+    const otra = marcadas.find((v) => String(v).startsWith("Otra: "));
+    if (p.tipo === "multiple") h += '<p class="cr-pista">Elige una o varias.</p>';
+    h += '<div class="cr-baldosas n' + ops.length + (p.tipo === "multiple" ? " cr-varias" : "") + '" role="group" aria-label="Opciones">';
+    ops.forEach((o, j) => {
+      const larga = !o.ayuda && String(o.texto).length > 32;
+      h += '<button type="button" class="cr-baldosa" data-j="' + j + '" aria-pressed="' + (marcadas.indexOf(o.texto) >= 0) + '">' + icono(o.icono) +
+        '<span class="cr-palabra' + (larga ? " cr-larga" : "") + '">' + (j + 1) + ' · ' + esc(o.texto) + '</span>' +
+        (o.ayuda ? '<span class="cr-frase">' + esc(o.ayuda) + '</span>' : '') +
+        (o.recomendada ? '<span class="cr-rec">Te la recomiendo</span>' : '') +
+        (o.nota ? '<span class="cr-rec">' + esc(o.nota) + '</span>' : '') + '</button>';
     });
-    if (Array.isArray(prev)) {
-      prev.forEach(v => {
-        if (v === "Otra" || v.startsWith("Otra: ")) {
-          const otraInput = wrap.querySelector('input[value="__OTRA__"]');
-          const otraTxt = wrap.querySelector(".cr-otra-txt");
-          if (otraInput) otraInput.checked = true;
-          if (otraTxt && v.startsWith("Otra: ")) otraTxt.value = v.slice(6);
-        } else {
-          const match = [...wrap.querySelectorAll("input")].find(inp => inp.value === v);
-          if (match) match.checked = true;
-        }
-      });
-    }
-    card.appendChild(wrap);
-
+    h += '</div>';
+    const elegidas = ops.map((o, j) => [o, j]).filter(([o]) => marcadas.indexOf(o.texto) >= 0);
+    elegidas.forEach(([o, j]) => { h += ficha(o, j, elegidas.length > 1); });
+    if (!elegidas.length && ops.some((o) => o.malo || o.bueno || o.cuesta)) h += '<p class="cr-pista">Pulsa una para ver lo malo, lo bueno y lo que te cuesta.</p>';
+    h += '<textarea class="cr-otra" id="cr-otra" rows="1" placeholder="Otra: con tus palabras" aria-label="Otra, con tus palabras">' + esc(otra ? otra.slice(6) : "") + '</textarea>';
   } else if (p.tipo === "escala") {
     const min = p.min ?? 0, max = p.max ?? 10, def = p.defecto ?? Math.round((min + max) / 2);
-    const wrap = document.createElement("div");
-    wrap.className = "cr-escala"; wrap.id = id;
-    const rango = document.createElement("input");
-    rango.type = "range"; rango.min = min; rango.max = max;
-    rango.value = prev != null ? prev : def;
-    const valorTxt = document.createElement("div");
-    valorTxt.className = "cr-escala-valor";
-    valorTxt.textContent = rango.value;
-    rango.addEventListener("input", () => {
-      valorTxt.textContent = rango.value;
-      guardar(id, rango.value);
-    });
-    const fila = document.createElement("div");
-    fila.className = "cr-escala-fila";
-    fila.innerHTML = `<span>${p.etiquetaMin || min}</span><span>${p.etiquetaMax || max}</span>`;
-    wrap.appendChild(rango);
-    wrap.appendChild(valorTxt);
-    wrap.appendChild(fila);
-    card.appendChild(wrap);
-    if (prev == null) guardar(id, rango.value);
+    const v = prev != null ? prev : def;
+    if (prev == null) guardar(id, String(v));
+    h += '<div class="cr-escala"><div class="cr-escala-valor" id="cr-escala-valor">' + esc(v) + '</div>' +
+      '<input type="range" id="cr-rango" min="' + esc(min) + '" max="' + esc(max) + '" value="' + esc(v) + '" aria-label="Puntuación">' +
+      '<div class="cr-escala-fila"><span>' + esc(p.etiquetaMin || min) + '</span><span>' + esc(p.etiquetaMax || max) + '</span></div></div>';
   }
+  if (p.siNoDices) h += '<p class="cr-sino">' + esc(p.siNoDices) + '</p>';
+  h += '<div class="cr-botones">' + (i ? '<button type="button" class="cr-boton" data-paso="-1">Atrás</button>' : '') +
+    '<button type="button" class="cr-boton' + (respondida(i) ? " cr-fuerte" : "") + '" id="cr-siguiente" data-paso="1">' + (i === N - 1 ? "Ver lo que has contestado" : "Siguiente") + '</button></div>';
+  return h;
+}
 
-  cont.appendChild(card);
-});
+function pintarResumen() {
+  let h = '<h2 class="cr-pregunta">Lo que has contestado</h2><ol class="cr-resumen">';
+  PREGUNTAS.forEach((p, i) => {
+    const r = respuestaTexto(i);
+    h += '<li><div><b>P' + (i + 1) + '. ' + esc(p.pregunta) + '</b>' + (r ? esc(r) : '<span class="cr-vacia">Sin responder</span>') +
+      '</div><button type="button" class="cr-boton" data-ir="' + i + '">Cambiar</button></li>';
+  });
+  return h + '</ol><p class="cr-pista">Pulsa «Copiar respuestas» y pega el bloque en el chat.</p>';
+}
+
+const vista = $("cr-vista");
+function crece(ta) { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + 4 + "px"; }
+function pintar() {
+  vista.innerHTML = paso < N ? pintarPregunta(paso) : pintarResumen();
+  vista.querySelectorAll("textarea").forEach(crece);
+  actualizarContador();
+}
 
 function actualizarContador() {
-  const g = cargarGuardado();
   let n = 0;
-  PREGUNTAS.forEach((p, i) => {
-    const id = "p" + i;
-    const respondida = g[id] != null && String(Array.isArray(g[id]) ? g[id].join(",") : g[id]).trim().length > 0;
-    const cardEl = document.getElementById("card-" + id);
-    if (cardEl) cardEl.dataset.respondida = respondida ? "1" : "0";
-    if (respondida) n++;
-  });
-  document.getElementById("cr-contador").textContent = n;
-  const pct = PREGUNTAS.length ? Math.round((n / PREGUNTAS.length) * 100) : 0;
-  document.getElementById("cr-progreso-fill").style.width = pct + "%";
+  for (let i = 0; i < N; i++) if (respondida(i)) n++;
+  $("cr-contador").textContent = n;
+  $("cr-progreso-fill").style.width = (N ? Math.round((n / N) * 100) : 0) + "%";
+  // Una acción principal por pantalla: «Copiar» manda cuando ya no queda nada por pasar.
+  $("cr-boton").className = "cr-boton" + (paso >= N || n === N ? " cr-fuerte" : "");
+  const sig = $("cr-siguiente");
+  if (sig && paso < N) sig.className = "cr-boton" + (respondida(paso) ? " cr-fuerte" : "");
 }
-actualizarContador();
+
+// Guarda lo elegido de una pregunta de opción: las opciones marcadas y, si hay, lo escrito en «Otra».
+function guardarOpcion(i, marcadas, otraTxt) {
+  const v = marcadas.slice();
+  if (otraTxt && otraTxt.trim()) v.push("Otra: " + otraTxt.trim());
+  guardar("p" + i, v);
+}
+vista.addEventListener("click", (ev) => {
+  const t = ev.target.closest("button");
+  if (!t) return;
+  if (t.dataset.j !== undefined && paso < N) {
+    const p = PREGUNTAS[paso], o = opcionesDe(p)[+t.dataset.j], prev = cargarGuardado()["p" + paso];
+    let marcadas = (Array.isArray(prev) ? prev : []).filter((v) => !esOtra(v));
+    const ya = marcadas.indexOf(o.texto) >= 0;
+    if (p.tipo === "multiple") marcadas = ya ? marcadas.filter((v) => v !== o.texto) : marcadas.concat(o.texto);
+    else marcadas = ya ? [] : [o.texto];
+    const orden = opcionesDe(p).map((x) => x.texto);
+    marcadas.sort((a, b) => orden.indexOf(a) - orden.indexOf(b));
+    guardarOpcion(paso, marcadas, $("cr-otra") ? $("cr-otra").value : "");
+    pintar();
+    return;
+  }
+  if (t.dataset.paso) { irA(paso + Number(t.dataset.paso)); return; }
+  if (t.dataset.ir !== undefined) irA(Number(t.dataset.ir));
+});
+vista.addEventListener("input", (ev) => {
+  const t = ev.target;
+  if (paso >= N) return;
+  if (t.id === "cr-campo") { guardar("p" + paso, t.value); if (t.tagName === "TEXTAREA") crece(t); }
+  else if (t.id === "cr-otra") {
+    // Escribir en «Otra» ya la marca: no hay que pulsar nada antes.
+    const prev = cargarGuardado()["p" + paso];
+    guardarOpcion(paso, (Array.isArray(prev) ? prev : []).filter((v) => !esOtra(v)), t.value);
+    crece(t);
+  } else if (t.id === "cr-rango") { $("cr-escala-valor").textContent = t.value; guardar("p" + paso, t.value); }
+});
+vista.addEventListener("keydown", (ev) => {
+  if (ev.key === "Enter" && ev.target.id === "cr-campo" && ev.target.tagName === "INPUT") { ev.preventDefault(); irA(paso + 1); }
+});
 
 function generarTexto() {
-  const g = cargarGuardado();
   const lineas = [];
   PREGUNTAS.forEach((p, i) => {
-    const id = "p" + i;
-    let v = g[id];
-    let texto;
-    if (v == null || (Array.isArray(v) && v.length === 0) || String(v).trim() === "") {
-      texto = "(sin responder)";
-    } else if (Array.isArray(v)) {
-      texto = v.join(", ");
-    } else {
-      texto = String(v);
-    }
     lineas.push("P" + (i + 1) + ". " + p.pregunta);
-    lineas.push("→ " + texto);
+    lineas.push("→ " + (respuestaTexto(i) || "(sin responder)"));
     lineas.push("");
   });
   return lineas.join("\n").trim();
 }
 
 async function copiar(texto) {
-  try {
-    await navigator.clipboard.writeText(texto);
-    return true;
-  } catch {
-    return false;
-  }
+  try { await navigator.clipboard.writeText(texto); return true; } catch { return false; }
 }
-
-const panelResultado = document.getElementById("cr-resultado");
-const cajaTexto = document.getElementById("cr-texto");
-const estado = document.getElementById("cr-estado");
-
+const panelResultado = $("cr-resultado");
+const cajaTexto = $("cr-texto");
+const estado = $("cr-estado");
 async function generarYCopiar() {
   const texto = generarTexto();
   cajaTexto.value = texto;
   panelResultado.hidden = false;
-  const ok = await copiar(texto);
-  if (ok) {
+  if (await copiar(texto)) {
     estado.textContent = "Copiado. Pégalo en el chat.";
     estado.style.color = "var(--ok)";
   } else {
@@ -480,10 +436,10 @@ async function generarYCopiar() {
     estado.style.color = "var(--warn)";
   }
 }
-
-document.getElementById("cr-boton").addEventListener("click", generarYCopiar);
-document.getElementById("cr-copiar-otra-vez").addEventListener("click", generarYCopiar);
-document.getElementById("cr-cerrar-resultado").addEventListener("click", () => { panelResultado.hidden = true; });
+$("cr-boton").addEventListener("click", generarYCopiar);
+$("cr-copiar-otra-vez").addEventListener("click", generarYCopiar);
+$("cr-cerrar-resultado").addEventListener("click", () => { panelResultado.hidden = true; });
+pintar();
 </script>
 </body>
 </html>

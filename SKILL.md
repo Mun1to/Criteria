@@ -1,6 +1,6 @@
 ---
 name: criteria
-description: Convierte varias preguntas sueltas (nombres, prioridades, alcance, gustos de diseño) en un cuestionario HTML de un solo archivo, con barra de progreso, opción "Otra" siempre disponible y el lenguaje visual del proyecto donde se pide (o uno neutro si no hay otro), con un botón que junta todas las respuestas en un bloque de texto listo para pegar de vuelta en el chat. Úsalo cuando el usuario diga "hazme un cuestionario", "criteria", "pregúntame con un formulario", "que lo rellene y te lo pego", o cuando haya que decidir varias cosas de tipo distinto (texto libre, elegir una opción, elegir varias, puntuar del 0 al 10) y dictarlas una por una sea más lento que rellenar un formulario y copiar.
+description: Convierte varias preguntas sueltas (nombres, prioridades, alcance, gustos de diseño) en un cuestionario HTML de un solo archivo que enseña una pregunta cada vez, con las opciones como baldosas de palabra y frase, barra de progreso, opción "Otra" siempre disponible y el lenguaje visual del proyecto donde se pide (o uno neutro si no hay otro), con un botón que junta todas las respuestas en un bloque de texto listo para pegar de vuelta en el chat. Úsalo cuando el usuario diga "hazme un cuestionario", "criteria", "pregúntame con un formulario", "que lo rellene y te lo pego", o cuando haya que decidir varias cosas de tipo distinto (texto libre, elegir una opción, elegir varias, puntuar del 0 al 10) y dictarlas una por una sea más lento que rellenar un formulario y copiar.
 disable-model-invocation: true
 ---
 
@@ -50,16 +50,31 @@ no vaya a cambiar nada, y reescribe toda pregunta que haya que releer dos veces 
 está pidiendo. Un cuestionario de cuarenta preguntas donde media docena son ruido no es más
 completo que uno de treinta y cuatro, es solo más largo y más pesado de rellenar.
 
-Cada opción de `opcion` o `multiple` puede ser solo texto, o llevar más: `{ texto, ayuda?,
-nota? }`, donde `ayuda` es una frase pequeña debajo (por qué importa esa opción) y `nota` es una
-insignia corta al lado (por ejemplo `"recomendada"`). No hay que elegir un formato para toda la
-lista: una pregunta puede mezclar opciones simples con otras que llevan ayuda o nota.
+Cada pregunta admite `ayuda` (por qué se pregunta ahora, en una línea) y `siNoDices` (qué pasa si
+se queda sin contestar). Las dos se ven debajo de la pregunta, que va arriba y entera.
+
+Cada opción de `opcion` o `multiple` puede ser solo texto, o llevar más:
+`{ texto, ayuda?, recomendada?, porque?, malo?, bueno?, cuesta?, noHace?, icono?, nota? }`.
+
+- `texto` es la palabra, grande: de una a tres palabras rinde mejor que una frase entera.
+- `ayuda` es la frase de debajo: qué pasa si se elige esa opción, con verbo.
+- `recomendada: true` en una sola, y `porque` dice por qué. **Nunca sale marcada de antemano**:
+  la recomendación se dice con palabras y quien contesta elige.
+- `malo`, `bueno` y `cuesta`, una línea cada uno y siempre los tres, para que las opciones se
+  comparen solas. Salen al pulsar la opción, debajo de las demás.
+- `noHace`, lo que esa opción no incluye, cuando se puede leer de dos maneras.
+- `icono`, uno de los que trae la plantilla: `si`, `no`, `ya`, `esperar`, `pregunta`, `gente`,
+  `dinero`, `texto`, `igual`, `estrella`, `lapiz`, `flecha`, `escudo`.
+- `nota`, una o dos palabras debajo en el color de acento (por ejemplo `"la más barata"`).
+
+No hay que elegir un formato para toda la lista: una pregunta puede mezclar opciones simples con
+otras que lo llevan todo. Una opción que solo trae un texto largo se ve con letra normal, no en
+negrita grande.
 
 Si el cuestionario es largo y las preguntas caen en grupos claros (como "la escalera de precios",
-"el móvil", "el dinero"), cualquier pregunta admite un `seccion: "Título del grupo"` opcional. En
-cuanto cambia de una pregunta a la siguiente, se inserta sola una cabecera con letra automática
-(A, B, C...) antes de esa tarjeta. Es solo agrupación visual: la numeración P1, P2... y el formato
-de respuesta no cambian.
+"el móvil", "el dinero"), cualquier pregunta admite un `seccion: "Título del grupo"` opcional. Sale
+encima de la pregunta con letra automática (A, B, C...) en cuanto cambia de una pregunta a la
+siguiente. Es solo agrupación: la numeración P1, P2... y el formato de respuesta no cambian.
 
 **Cómo distinguir `opcion` de `multiple`, sin adivinar:** pregúntate si dos de las respuestas
 podrían ser ciertas a la vez. "¿Cuánto cuesta al mes?" es `opcion`, porque un precio excluye a los
@@ -69,8 +84,8 @@ varias razones o varias funciones pueden ser verdad al mismo tiempo. Por defecto
 más, no de menos.
 
 **Esto no es negociable, ni siquiera si el cuestionario necesita más diseño del que trae la
-plantilla.** El título, la ayuda y la insignia de arriba ya cubren el caso más común de "necesito
-explicar cada opción y marcar la recomendada". Si aun así hace falta algo que de verdad no cabe
+plantilla.** La palabra, la frase, la recomendada con su porqué y lo malo, lo bueno y lo que cuesta
+ya cubren el caso más común de "necesito explicar cada opción y marcar la recomendada". Si aun así hace falta algo que de verdad no cabe
 (una tabla comparativa entera, un aviso grande), se puede construir a mano un diseño más rico,
 pero el comportamiento no se negocia: toda pregunta de opción lleva su "Otra:" con texto libre, y
 toda pregunta donde dos respuestas puedan ser ciertas a la vez usa checkboxes, no radios. Un
@@ -83,8 +98,10 @@ Esto no es opcional: el cuestionario **no lleva siempre el mismo look**, lleva e
 conversación en la que se pide. Antes de generar el archivo, mira si el proyecto activo tiene su
 propio sistema de diseño (un `App.css`, un `globals.css`, tokens de Tailwind, variables de tema
 ya definidas) y localiza sus colores, sus radios y su tipografía. Si lo tiene, sustituye en la
-plantilla los valores del bloque marcado `PALETA` (los `--bg`, `--text`, `--accent`, `--ok`,
-`--warn`, `--bad`, `--radio`, `font-family`...) por los suyos. El bloque `ESTRUCTURA` que viene
+plantilla los valores del bloque marcado `PALETA` (los `--bg`, `--text`, `--accent`, `--accent-text`,
+`--ok`, `--warn`, `--bad`, `--radio`, `font-family`, `--letra-titulos`...) por los suyos. `--accent` es
+el fondo de lo elegido y del botón principal, con `--sobre` encima; `--accent-text` es el acento cuando
+va sobre el fondo de la página. El bloque `ESTRUCTURA` que viene
 debajo no se toca nunca: usa siempre `var(--algo)`, así que hereda el cambio de piel solo. Si el
 proyecto no tiene un sistema de diseño propio identificable (una tarea sin web, o un repo sin
 frontend), se deja la paleta neutra de la plantilla, ya verificada por contraste WCAG 2.1.
@@ -128,10 +145,15 @@ tiene que leerla y responderla ya la tiene delante, en el formulario.
 
 ### 5. Cuando llegue el bloque pegado
 
-Viene en el formato `P1. <pregunta>\n→ <respuesta>`. Las que digan `(sin responder)` son las que
-se dejaron en blanco: no se inventan, se preguntan de nuevo en el chat si hacen falta para
-cerrar la decisión, o se aparcan si no son bloqueantes. Con lo demás, se arma el prompt o se
-toma la decisión que motivó el cuestionario.
+Viene en el formato `P1. <pregunta>\n→ <respuesta>`. En las preguntas de opción, cada elegida va
+con su número (`→ 2 · 99 €`) y lo escrito en el hueco libre, detrás de `Otra: `. Las que digan
+`(sin responder)` son las que se dejaron en blanco: no se inventan, se preguntan de nuevo en el chat
+si hacen falta para cerrar la decisión, o se aparcan si no son bloqueantes. Con lo demás, se arma el
+prompt o se toma la decisión que motivó el cuestionario.
+
+Si las mismas preguntas se mandan también por otro canal (una notificación al móvil, otra
+herramienta de preguntas), van en el mismo orden y con las opciones en el mismo orden: así «P2, la 3»
+quiere decir lo mismo en los dos sitios.
 
 ## Lo que ya trae la plantilla, y por qué no hay que tocarlo
 
@@ -141,27 +163,36 @@ toma la decisión que motivó el cuestionario.
 - **La paleta por defecto** (`--bg`, `--panel`, `--accent`...) es la que se usa en el paso 2
   cuando el proyecto no tiene la suya propia, con el contraste ya medido por WCAG 2.1. Si un hex
   se toca alguna vez, se vuelve a medir, no se ajusta mirando.
+- **Una pregunta cada vez.** Muchas preguntas densas a la vista a la vez cuestan de entender y de
+  decidir; de una en una, quien contesta piensa una sola cosa. Arriba la pregunta, entera; debajo,
+  por qué se pregunta y qué pasa si no contesta. «Atrás» y «Siguiente» para moverse, y en la última,
+  «Ver lo que has contestado»: un repaso de todas, cada una con su «Cambiar». `Enter` en una respuesta
+  corta pasa a la siguiente.
+- **Las opciones son baldosas de palabra y frase**: la palabra grande con su número, la frase debajo
+  más suave, y al pulsarla se llena del color de acento. La recomendada lo dice con palabras, y al
+  pulsarla dice por qué. Debajo sale lo malo, lo bueno y lo que cuesta de la elegida, una línea cada
+  uno. En pantalla grande van en columnas y en el móvil una debajo de otra.
+- **Un solo «Copiar respuestas»**, abajo y siempre a mano, que pasa a ser el botón principal cuando ya
+  está todo contestado o en el repaso final.
 - **Barra de progreso arriba**, siempre visible mientras se hace scroll (`position: sticky`), con
   el contador de respondidas al lado. No es solo un número perdido al pie de página.
 - **"Otra:" siempre presente** en toda pregunta de opción o múltiple, con su hueco de texto
-  libre. Es obligatorio en la plantilla, no algo que haya que acordarse de pedir. Escribir ahí la
-  marca sola, sin tener que clicar antes su casilla, y la selección se recuerda al recargar la
-  página igual que el resto de respuestas.
-- **Selección múltiple de verdad, y avisada.** `multiple` usa casillas, no radios: se puede
-  marcar más de una a la vez, el bloque final las junta separadas por comas, y la pregunta lleva
-  sola la insignia "elige una o varias" para que se note sin tener que probar a marcar dos.
-- **Opciones con ayuda e insignia**, cuando la lista sola no basta: cada opción admite una frase
-  de explicación debajo y una insignia corta al lado (por ejemplo "recomendada"), sin tener que
-  escribir HTML a mano ni salirse de la plantilla.
+  libre. Es obligatorio en la plantilla, no algo que haya que acordarse de pedir. Lo que se escribe
+  ahí cuenta solo, sin pulsar nada antes, y no quita lo que ya estaba elegido: vale para matizar.
+- **Selección múltiple de verdad, y avisada.** `multiple` usa casillas (cuadradas, no redondas): se
+  puede marcar más de una a la vez, el bloque final las junta separadas por comas, y la pregunta dice
+  "Elige una o varias" para que se note sin tener que probar a marcar dos.
 - **Secciones con letra automática**, para cuestionarios largos: agrupar preguntas bajo un
-  `seccion` no cambia su numeración ni el formato de respuesta, solo añade un separador visual.
+  `seccion` no cambia su numeración ni el formato de respuesta, solo dice encima a qué grupo va.
+- **Sin insignias ni etiquetas en caja.** Lo que hay que destacar se destaca con peso, tamaño o color
+  del texto, nunca con una píldora alrededor. Letra de 17 px y nada por debajo de 14.
 - **Nada es obligatorio de responder.** Un formulario donde todo es obligatorio no lo rellena
   nadie rápido; el botón copia igual con preguntas en blanco, marcadas como tal.
 - **Copiar con red.** Intenta `navigator.clipboard`, y si el navegador lo bloquea (pasa a veces
   en `file://`), deja el texto seleccionado en una caja visible para que un Ctrl+C manual
   funcione igual.
 - **Autoguardado en `localStorage`.** Si se cierra la pestaña sin querer a mitad, lo que ya se
-  escribió sigue ahí al reabrir el mismo archivo.
+  escribió sigue ahí al reabrir el mismo archivo, y vuelve a la pregunta en la que estaba.
 
 ## Cuándo NO usar esto
 
