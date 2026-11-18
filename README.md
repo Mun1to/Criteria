@@ -14,7 +14,7 @@ Inside Claude Code, two lines:
 /plugin install criteria@vibeset
 ```
 
-If the install summary says `Run /reload-plugins to activate`, run it.
+If the install summary says `Run /reload-plugins to apply`, Claude Code reloads by itself. If it warns and leaves the plugin pending, run `/reload-plugins --force`.
 
 <details>
 <summary>Prefer to install it by hand?</summary>
@@ -35,9 +35,8 @@ New-Item -ItemType Junction -Path "$env:USERPROFILE\.claude\skills\criteria" -Ta
 
 ## Use it
 
-Say "make me a questionnaire", "criteria", "ask me with a form", or anything that means you
-would rather fill in several answers at once than dictate them one by one. It only fires when
-asked: it will not pop up a form on its own in the middle of something else.
+Type `/criteria` at the start of your message, followed by what you need to decide. It only fires
+when you run it: it will not pop up a form on its own in the middle of something else.
 
 ## What it looks like
 

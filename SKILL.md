@@ -129,7 +129,7 @@ open(p, "w", encoding="utf-8").write(html)
 EOF
 ```
 
-En PowerShell, lo mismo con `-replace` sobre `Get-Content -Raw` y `Set-Content -Encoding utf8`. Si
+En PowerShell, lo mismo con `-replace` sobre `Get-Content -Raw -Encoding UTF8` y `Set-Content -Encoding utf8`. Si
 el paso 2 exige otra paleta, esos mismos comandos añaden más `-replace`/`.replace()` sobre los
 valores del bloque `PALETA`; el bloque `ESTRUCTURA` nunca se toca. No se usan las herramientas de
 leer y editar archivo sobre `plantilla.html` ni sobre la copia: no hace falta, y cargar un HTML de
